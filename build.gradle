@@ -17,11 +17,14 @@ buildscript {
     }
 }
 
-def modulePrefix = 'app'
+def modulePrefix = 'cubaglevt'
 
 def globalModule = project(":${modulePrefix}-global")
 def coreModule = project(":${modulePrefix}-core")
 def webModule = project(":${modulePrefix}-web")
+def sharedLibModule = project(":${modulePrefix}-shared-lib")
+def desktopModule = project(":${modulePrefix}-desktop")
+def portalModule = project(":${modulePrefix}-portal")
 
 def servletApi = 'org.apache.tomcat:tomcat-servlet-api:8.0.26'
 
@@ -50,7 +53,7 @@ dependencies {
 
 def hsql = 'org.hsqldb:hsqldb:2.2.9'
 
-configure([globalModule, coreModule, webModule]) {
+configure([globalModule, coreModule, webModule, sharedLibModule, desktopModule, portalModule]) {
     apply(plugin: 'java')
     apply(plugin: 'maven')
     apply(plugin: 'idea')
@@ -73,6 +76,13 @@ configure([globalModule, coreModule, webModule]) {
 configure(globalModule) {
     task enhance(type: CubaEnhancing)
 
+    jar {
+        manifest {
+            attributes('App-Component-Id': cuba.artifact.group)
+            attributes('App-Component-Version': cuba.artifact.version + (cuba.artifact.isSnapshot ? '-SNAPSHOT' : ''))
+        }
+    }
+
     
 }
 
@@ -85,6 +95,7 @@ configure(coreModule) {
 
     dependencies {
         compile(globalModule)
+        compile(sharedLibModule)
         provided(servletApi)
         jdbc(hsql)
         testRuntime(hsql)
@@ -132,7 +143,7 @@ configure(webModule) {
     dependencies {
         provided(servletApi)
         compile(globalModule)
-
+        compile(sharedLibModule)
     }
     
     task webArchive(type: Zip) {
@@ -173,6 +184,95 @@ configure(webModule) {
     }
 }
 
+configure(desktopModule) {
+    apply(plugin: 'application')
+    mainClassName = 'com.haulmont.addon.globalevents.desktop.App'
+
+    dependencies {
+        compile(globalModule)
+        
+    }
+    assemble.dependsOn = [ classes ]
+
+    jar {
+        manifest {
+            attributes("Permissions": "all-permissions")
+        }
+    }
+
+    installDist {
+        into("${projectDir}/../../deploy/" + applicationName)
+    }
+
+    task deploy(dependsOn: installDist)
+
+    task createWebStart(dependsOn: [assemble, jar], type: CubaWebStartCreation) {
+        signJarsKeystore = "${projectDir}/webstart/sign-jars-keystore.jks"
+        signJarsAlias = 'signJars'
+        signJarsPassword = 'HaulmontSignJars'
+        indexFileName = "${projectDir}/webstart/index.html"
+        basePath = "${modulePrefix}-webstart"
+    }
+
+    task deployWebStart(dependsOn: createWebStart, type: CubaWebStartDeployment) {
+        basePath = "${modulePrefix}-webstart"
+    }
+}
+
+configure(portalModule) {
+    dependencies {
+        provided(servletApi)
+        compile(globalModule)
+        
+    }
+
+    def webappName = "${modulePrefix}-portal"
+    def resourcesDir = "$cuba.tomcat.dir/webapps/$webappName/resources"
+    def ftlDir = "$cuba.tomcat.dir/webapps/$webappName/WEB-INF/templates"
+
+    task deploy(dependsOn: assemble, type: CubaDeployment) {
+        appName = webappName
+        appJars(modulePrefix + '-global', modulePrefix + '-portal')
+    }
+
+    task deployStatic() {
+        doLast {
+            copy {
+                from file('web/resources')
+                include '**/*.css'
+                include '**/*.js'
+                include '**/*.png'
+                include '**/*.gif'
+                include '**/*.jpg'
+                into resourcesDir
+            }
+            copy {
+                from file('web/WEB-INF/templates')
+                include '**/*.ftl'
+                into ftlDir
+            }
+        }
+    }
+
+    task cleanStatic() {
+        doLast {
+            delete resourcesDir
+            delete ftlDir
+        }
+    }
+
+    task webArchive(type: Zip) {
+        from file('web')
+        from file("$buildDir/web")
+        exclude '**/web.xml', '**/app.properties'
+        classifier = 'web'
+    }
+
+    artifacts {
+        archives webArchive
+    }
+}
+
 
 
 
@@ -181,9 +281,11 @@ task undeploy(type: Delete, dependsOn: ":${modulePrefix}-web:cleanConf") {
     delete("$cuba.tomcat.dir/shared")
     delete("$cuba.tomcat.dir/webapps/${modulePrefix}-core")
     delete("$cuba.tomcat.dir/webapps/${modulePrefix}")
+    delete("$cuba.tomcat.dir/webapps/${modulePrefix}-webstart")
+    delete("$cuba.tomcat.dir/webapps/${modulePrefix}-portal")
 }
 
-task restart(dependsOn: ['stop', ":${modulePrefix}-core:deploy", ":${modulePrefix}-web:deploy"], description: 'Redeploys applications and restarts local Tomcat') {
+task restart(dependsOn: ['stop', ":${modulePrefix}-core:deploy", ":${modulePrefix}-web:deploy", ":${modulePrefix}-portal:deploy"], description: 'Redeploys applications and restarts local Tomcat') {
     doLast {
         ant.waitfor(maxwait: 6, maxwaitunit: 'second', checkevery: 2, checkeveryunit: 'second') {
             not {

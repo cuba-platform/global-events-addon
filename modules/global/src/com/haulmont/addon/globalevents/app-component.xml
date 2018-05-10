@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<app-component xmlns="http://schemas.haulmont.com/cuba/app-component.xsd"
+               dependsOn="com.haulmont.cuba">
+    <module blocks="*"
+            name="global">
+        <artifact appJar="true"
+                  name="cubaglevt-global"/>
+        <property name="cuba.persistenceConfig"
+                  value="+com/haulmont/addon/globalevents/persistence.xml"/>
+        <property name="cuba.metadataConfig"
+                  value="+com/haulmont/addon/globalevents/metadata.xml"/>
+        <property name="cuba.viewsConfig"
+                  value="+com/haulmont/addon/globalevents/views.xml"/>
+    </module>
+    <module blocks="core,web,portal"
+            name="shared-lib">
+        <artifact appJar="false"
+                  name="cubaglevt-shared-lib"/>
+    </module>
+    <module blocks="core"
+            dependsOn="global,shared-lib"
+            name="core">
+        <artifact appJar="true"
+                  name="cubaglevt-core"/>
+        <property name="cuba.springContextConfig"
+                  value="+com/haulmont/addon/globalevents/spring.xml"/>
+        <property name="cuba.mainMessagePack"
+                  value="+com.haulmont.addon.globalevents.core"/>
+    </module>
+    <module blocks="web"
+            dependsOn="global,shared-lib"
+            name="web">
+        <artifact appJar="true"
+                  name="cubaglevt-web"/>
+        <artifact classifier="web"
+                  configuration="webcontent"
+                  ext="zip"
+                  name="cubaglevt-web"/>
+        <property name="cuba.springContextConfig"
+                  value="+com/haulmont/addon/globalevents/web-spring.xml"/>
+        <property name="cuba.dispatcherSpringContextConfig"
+                  value="+com/haulmont/addon/globalevents/web-dispatcher-spring.xml"/>
+        <property name="cuba.windowConfig"
+                  value="+com/haulmont/addon/globalevents/web-screens.xml"/>
+        <property name="cuba.menuConfig"
+                  value="+com/haulmont/addon/globalevents/web-menu.xml"/>
+        <property name="cuba.permissionConfig"
+                  value="+com/haulmont/addon/globalevents/web-permissions.xml"/>
+        <property name="cuba.mainMessagePack"
+                  value="+com.haulmont.addon.globalevents.web"/>
+    </module>
+    <module blocks="desktop"
+            dependsOn="global"
+            name="desktop">
+        <artifact name="cubaglevt-desktop"/>
+        <property name="cuba.springContextConfig"
+                  value="+com/haulmont/addon/globalevents/desktop-spring.xml"/>
+        <property name="cuba.windowConfig"
+                  value="+com/haulmont/addon/globalevents/desktop-screens.xml"/>
+        <property name="cuba.menuConfig"
+                  value="+com/haulmont/addon/globalevents/desktop-menu.xml"/>
+        <property name="cuba.permissionConfig"
+                  value="+com/haulmont/addon/globalevents/desktop-permissions.xml"/>
+        <property name="cuba.mainMessagePack"
+                  value="+com.haulmont.addon.globalevents.desktop"/>
+    </module>
+    <module blocks="portal"
+            dependsOn="global,shared-lib"
+            name="portal">
+        <artifact appJar="true"
+                  name="cubaglevt-portal"/>
+        <property name="cuba.springContextConfig"
+                  value="+com/haulmont/addon/globalevents/portal-security-spring.xml com/haulmont/addon/globalevents/portal-spring.xml"/>
+        <property name="cuba.dispatcherSpringContextConfig"
+                  value="+com/haulmont/addon/globalevents/portal-dispatcher-spring.xml"/>
+        <property name="cuba.mainMessagePack"
+                  value="+com.haulmont.addon.globalevents.portal"/>
+    </module>
+</app-component>

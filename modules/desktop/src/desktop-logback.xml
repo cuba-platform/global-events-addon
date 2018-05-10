@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true">
+
+    <property name="logDir" value="${user.home}/.haulmont/cuba/global-events/logs"/>
+
+    <appender name="File" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logDir}/app.log</file>
+        <append>false</append>
+
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>app.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- keep 30 days' worth of history -->
+            <maxHistory>30</maxHistory>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root>
+        <appender-ref ref="Console"/>
+        <appender-ref ref="File"/>
+    </root>
+
+    <!-- Begin CUBA -->
+
+    <logger name="com.haulmont.cuba" level="DEBUG"/>
+
+    <logger name="com.haulmont.cuba.core.sys" level="INFO"/>
+
+    <!-- End CUBA -->
+
+    <logger name="org.springframework" level="INFO"/>
+
+    <logger name="freemarker" level="INFO"/>
+
+    <logger name="org.apache.http" level="INFO"/>
+
+    <logger name="sun" level="INFO"/>
+
+    <logger name="com.sun" level="INFO"/>
+
+    <logger name="javax" level="INFO"/>
+
+    <logger name="org.perf4j.TimingLogger" additivity="false" level="OFF">
+        <!--<appender-ref ref="CoalescingStatistics"/>-->
+    </logger>
+
+    <logger name="com.haulmont.cuba.gui.logging.UIPerformanceLogger" additivity="false" level="OFF">
+        <!--<appender-ref ref="UICoalescingStatistics"/>-->
+    </logger>
+
+    <!-- End Perf4J  -->
+
+</configuration>
