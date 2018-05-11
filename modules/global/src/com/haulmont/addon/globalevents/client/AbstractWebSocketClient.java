@@ -64,7 +64,7 @@ public abstract class AbstractWebSocketClient {
     public synchronized void connect() {
         if (webSocketSession != null)
             return;
-        log.info("Opening session");
+        log.debug("Opening session");
 
         Object context = serverSelector.initContext();
         String url = getUrl(context);
@@ -77,7 +77,7 @@ public abstract class AbstractWebSocketClient {
                 break;
             } catch (ExecutionException e) {
                 if (e.getCause() instanceof ResourceAccessException) {
-                    log.info("Unable to open session: {}", e.getCause().toString());
+                    log.debug("Unable to open session: {}", e.getCause().toString());
                     serverSelector.fail(context);
                     url = getUrl(context);
                     if (url != null)
@@ -101,7 +101,7 @@ public abstract class AbstractWebSocketClient {
             log.error("Invalid session: " + webSocketSession);
             return;
         }
-        log.info("Sending auth message to " + webSocketSession);
+        log.debug("Sending auth message to " + webSocketSession);
         try {
             webSocketSession.sendMessage(new TextMessage(getAuthMessageContent()));
         } catch (IOException e) {
@@ -146,7 +146,7 @@ public abstract class AbstractWebSocketClient {
 
     public synchronized void disconnect() {
         if (webSocketSession != null && webSocketSession.isOpen()) {
-            log.info("Closing session");
+            log.debug("Closing session");
             try {
                 webSocketSession.close();
             } catch (IOException e) {
@@ -173,7 +173,7 @@ public abstract class AbstractWebSocketClient {
 
         @Override
         protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-            log.info("Received message {} from {}", message, session);
+            log.debug("Received message {} from {}", message, session);
             byte[] bytes = Base64.getDecoder().decode(message.getPayload().getBytes("UTF-8"));
             GlobalApplicationEvent event = (GlobalApplicationEvent) SerializationSupport.deserialize(bytes);
             publishEvent(event);

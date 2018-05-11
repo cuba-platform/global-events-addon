@@ -48,20 +48,20 @@ public class WebSocketServer extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        log.info("Received {} from {}", message, session);
+        log.debug("Received {} from {}", message, session);
         Boolean authenticated = sessions.get(session);
         if (authenticated != null) {
             if (!authenticated) {
                 String payload = message.getPayload();
                 if (serverConfig.getTrustedClientPassword().equals(payload)) {
                     sessions.put(session, true);
-                    log.info("Authenticated session: " + session);
+                    log.debug("Authenticated session: " + session);
                 } else {
                     log.warn("Invalid credentials, removing session " + session);
                     sessions.remove(session);
                 }
             } else {
-                log.info("Session {} is already authenticated");
+                log.debug("Session {} is already authenticated");
             }
         } else {
             log.warn("Unknown session: " + session);
@@ -81,6 +81,7 @@ public class WebSocketServer extends TextWebSocketHandler {
     }
 
     public void sendEvent(GlobalApplicationEvent event) {
+        log.debug("Sending {} to {}", event, sessions);
         Iterator<Map.Entry<WebSocketSession, Boolean>> it = sessions.entrySet().iterator();
         if (it.hasNext()) {
             byte[] bytes = SerializationSupport.serialize(event);
@@ -97,7 +98,7 @@ public class WebSocketServer extends TextWebSocketHandler {
                     WebSocketSession session = entry.getKey();
                     try {
                         TextMessage message = new TextMessage(str);
-                        log.info("Sending message {} to {}", message, session);
+                        log.debug("Sending message {} to {}", message, session);
                         session.sendMessage(message);
                     } catch (IOException e) {
                         log.warn("Error sending message, removing the session: " + e);

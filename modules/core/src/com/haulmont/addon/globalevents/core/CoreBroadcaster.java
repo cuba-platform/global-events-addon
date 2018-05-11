@@ -20,6 +20,8 @@ import com.haulmont.addon.globalevents.GlobalApplicationEvent;
 import com.haulmont.cuba.core.app.ClusterListenerAdapter;
 import com.haulmont.cuba.core.app.ClusterManagerAPI;
 import com.haulmont.cuba.core.global.Events;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -29,10 +31,12 @@ import java.util.UUID;
 @Component("cubaglevt_CoreBroadcaster")
 public class CoreBroadcaster {
 
+    private static final Logger log = LoggerFactory.getLogger(CoreBroadcaster.class);
+
     private UUID origin = UUID.randomUUID();
 
     @Inject
-    private WebSocketServer wsServer;
+    private WebSocketServer webSocketServer;
 
     @Inject
     private LocalServer localServer;
@@ -45,10 +49,11 @@ public class CoreBroadcaster {
     @Inject
     public void setClusterManager(ClusterManagerAPI clusterManagerAPI) {
         this.clusterManagerAPI = clusterManagerAPI;
-        clusterManagerAPI.addListener(GlobalApplicationEvent.class, new ClusterListenerAdapter<GlobalApplicationEvent>() {
+        clusterManagerAPI.addListener(GlobalEventClusterMessage.class, new ClusterListenerAdapter<GlobalEventClusterMessage>() {
             @Override
-            public void receive(GlobalApplicationEvent event) {
-                events.publish(event);
+            public void receive(GlobalEventClusterMessage message) {
+                log.debug("Received {}, re-publishing it", message.getEvent());
+                events.publish(message.getEvent());
             }
         });
     }
@@ -57,9 +62,9 @@ public class CoreBroadcaster {
     public void onGlobalEvent(GlobalApplicationEvent event) {
         if (event.getServerOrigin() == null) {
             event.setServerOrigin(origin);
-            clusterManagerAPI.send(event);
+            clusterManagerAPI.send(new GlobalEventClusterMessage(event));
         }
         localServer.sendEvent(event);
-        wsServer.sendEvent(event);
+        webSocketServer.sendEvent(event);
     }
 }

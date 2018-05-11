@@ -20,6 +20,8 @@ import com.haulmont.cuba.web.App;
 import com.haulmont.cuba.web.AppUI;
 import com.haulmont.cuba.web.security.events.AppStartedEvent;
 import com.vaadin.server.VaadinSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -31,6 +33,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Component("globevnt_GlobalUiEvents")
 public class GlobalUiEvents {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalUiEvents.class);
 
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
@@ -55,6 +59,8 @@ public class GlobalUiEvents {
         } finally {
             lock.readLock().unlock();
         }
+
+        log.debug("Sending {} to {} Vaadin sessions", event, activeSessions.size());
 
         for (VaadinSession session : activeSessions) {
             // obtain lock on session state
