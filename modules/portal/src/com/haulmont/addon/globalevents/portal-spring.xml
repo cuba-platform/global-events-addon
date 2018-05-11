@@ -1,20 +1,30 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:task="http://www.springframework.org/schema/task"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
-        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd">
-
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd         http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd"
+       xmlns:task="http://www.springframework.org/schema/task">
     <!--cuba_PortalAnonymousSessionHolder-->
-
-    <bean id="anonymousSessionPingScheduler" class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
-        <property name="daemon" value="true"/>
-        <property name="poolSize" value="1"/>
+    <bean id="anonymousSessionPingScheduler"
+          class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
+        <property name="daemon"
+                  value="true"/>
+        <property name="poolSize"
+                  value="1"/>
     </bean>
-
     <task:scheduled-tasks scheduler="anonymousSessionPingScheduler">
         <!-- every 10 minutes -->
-        <task:scheduled ref="cuba_PortalAnonymousSessionHolder" method="pingSession" fixed-delay="600000"/>
+        <task:scheduled fixed-delay="600000"
+                        method="pingSession"
+                        ref="cuba_PortalAnonymousSessionHolder"/>
     </task:scheduled-tasks>
-    
+    <bean class="com.haulmont.cuba.portal.sys.remoting.PortalRemoteProxyBeanCreator">
+        <property name="serverSelector"
+                  ref="cuba_ServerSelector"/>
+        <property name="remoteServices">
+            <map>
+                <entry key="cubaglevt_GlobalEventsService"
+                       value="com.haulmont.addon.globalevents.service.GlobalEventsService"/>
+            </map>
+        </property>
+    </bean>
 </beans>
