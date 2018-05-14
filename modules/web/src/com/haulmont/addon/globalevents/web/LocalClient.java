@@ -78,7 +78,6 @@ public class LocalClient {
             return;
         }
 
-        globalUiEvents.publish(event);
         // decouple from the calling thread
         executor.submit(() -> {
             if (event instanceof GlobalUiEvent) {

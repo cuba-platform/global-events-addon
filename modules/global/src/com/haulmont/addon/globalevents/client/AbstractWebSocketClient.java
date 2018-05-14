@@ -174,9 +174,13 @@ public abstract class AbstractWebSocketClient {
         @Override
         protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
             log.debug("Received message {} from {}", message, session);
-            byte[] bytes = Base64.getDecoder().decode(message.getPayload().getBytes("UTF-8"));
-            GlobalApplicationEvent event = (GlobalApplicationEvent) SerializationSupport.deserialize(bytes);
-            publishEvent(event);
+            try {
+                byte[] bytes = Base64.getDecoder().decode(message.getPayload().getBytes("UTF-8"));
+                GlobalApplicationEvent event = (GlobalApplicationEvent) SerializationSupport.deserialize(bytes);
+                publishEvent(event);
+            } catch (Exception e) {
+                log.error("Error handling message", e);
+            }
         }
     }
 }
