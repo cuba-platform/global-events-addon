@@ -18,6 +18,7 @@ package com.haulmont.addon.globalevents.web;
 
 import com.haulmont.addon.globalevents.GlobalApplicationEvent;
 import com.haulmont.addon.globalevents.client.AbstractWebSocketClient;
+import com.haulmont.addon.globalevents.client.NoServersException;
 import com.haulmont.cuba.core.sys.events.AppContextStoppedEvent;
 import com.haulmont.cuba.web.WebConfig;
 import com.haulmont.cuba.web.auth.WebAuthConfig;
@@ -29,7 +30,7 @@ import javax.inject.Inject;
 import java.util.UUID;
 
 @Component("cubaglevt_WebSocketClient")
-public class WebSocketClient extends AbstractWebSocketClient {
+public class WebRemoteClient extends AbstractWebSocketClient {
 
     @Inject
     private WebAuthConfig webAuthConfig;
@@ -62,7 +63,11 @@ public class WebSocketClient extends AbstractWebSocketClient {
     public void init() {
         if (!webConfig.getUseLocalServiceInvocation()) {
             // connect on first web request
-            connect();
+            try {
+                connect();
+            } catch (NoServersException e) {
+                throw new RuntimeException("Unable to open session", e);
+            }
         }
     }
 

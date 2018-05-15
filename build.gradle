@@ -247,7 +247,7 @@ configure(portalModule) {
     dependencies {
         provided(servletApi)
         compile(globalModule)
-        
+        compile(sharedLibModule)
     }
 
     def webappName = "${modulePrefix}-portal"

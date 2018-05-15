@@ -47,7 +47,7 @@ public abstract class AbstractWebSocketClient {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractWebSocketClient.class);
 
-    private WebSocketSession webSocketSession;
+    protected WebSocketSession webSocketSession;
 
     @Resource(name = ServerSelector.NAME)
     private ServerSelector serverSelector;
@@ -61,7 +61,7 @@ public abstract class AbstractWebSocketClient {
 
     protected abstract void publishGlobalUiEvent(GlobalApplicationEvent event);
 
-    public synchronized void connect() {
+    public synchronized void connect() throws NoServersException {
         if (webSocketSession != null)
             return;
         log.debug("Opening session");
@@ -69,7 +69,7 @@ public abstract class AbstractWebSocketClient {
         Object context = serverSelector.initContext();
         String url = getUrl(context);
         if (url == null) {
-            throw new RuntimeException("Unable to open session: no available server URLs");
+            throw new NoServersException("No available server URLs");
         }
         while (true) {
             try {
@@ -83,7 +83,7 @@ public abstract class AbstractWebSocketClient {
                     if (url != null)
                         log.debug("Trying next URL");
                     else
-                        throw new RuntimeException("Unable to open session: no more server URLs available");
+                        throw new NoServersException("No more server URLs available");
                 } else {
                     throw new RuntimeException("Error opening session", e);
                 }

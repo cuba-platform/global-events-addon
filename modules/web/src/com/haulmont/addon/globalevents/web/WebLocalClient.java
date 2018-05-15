@@ -35,9 +35,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Component("cubaglevt_LocalClient")
-public class LocalClient {
+public class WebLocalClient {
 
-    private static final Logger log = LoggerFactory.getLogger(LocalClient.class);
+    private static final Logger log = LoggerFactory.getLogger(WebLocalClient.class);
 
     @Inject
     private WebConfig webConfig;
@@ -54,7 +54,7 @@ public class LocalClient {
     private ExecutorService executor = Executors.newFixedThreadPool(5,
             new ThreadFactoryBuilder()
                     .setDaemon(true)
-                    .setNameFormat("GE-LocalClient-%d")
+                    .setNameFormat("GE-WebLocalClient-%d")
                     .setThreadFactory(Executors.defaultThreadFactory())
                     .build());
 

@@ -70,10 +70,6 @@
         <artifact appJar="true"
                   name="cubaglevt-portal"/>
         <property name="cuba.springContextConfig"
-                  value="+com/haulmont/addon/globalevents/portal-security-spring.xml com/haulmont/addon/globalevents/portal-spring.xml"/>
-        <property name="cuba.dispatcherSpringContextConfig"
-                  value="+com/haulmont/addon/globalevents/portal-dispatcher-spring.xml"/>
-        <property name="cuba.mainMessagePack"
-                  value="+com.haulmont.addon.globalevents.portal"/>
+                  value="+com/haulmont/addon/globalevents/portal-spring.xml"/>
     </module>
 </app-component>
