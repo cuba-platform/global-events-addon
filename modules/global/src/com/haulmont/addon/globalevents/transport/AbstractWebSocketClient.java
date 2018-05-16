@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.haulmont.addon.globalevents.client;
+package com.haulmont.addon.globalevents.transport;
 
 import com.haulmont.addon.globalevents.GlobalApplicationEvent;
 import com.haulmont.addon.globalevents.GlobalUiEvent;
@@ -55,7 +55,7 @@ public abstract class AbstractWebSocketClient {
     @Inject
     private Events events;
 
-    protected abstract String getAuthMessageContent();
+    protected abstract WebSocketAuthData getAuthMessageContent();
 
     protected abstract UUID getCurrentClientOrigin();
 
@@ -103,7 +103,10 @@ public abstract class AbstractWebSocketClient {
         }
         log.debug("Sending auth message to " + webSocketSession);
         try {
-            webSocketSession.sendMessage(new TextMessage(getAuthMessageContent()));
+            WebSocketAuthData authData = getAuthMessageContent();
+            byte[] bytes = SerializationSupport.serialize(authData);
+            String strData = new String(Base64.getEncoder().encode(bytes), "UTF-8");
+            webSocketSession.sendMessage(new TextMessage(strData));
         } catch (IOException e) {
             throw new RuntimeException("Error sending auth message", e);
         }

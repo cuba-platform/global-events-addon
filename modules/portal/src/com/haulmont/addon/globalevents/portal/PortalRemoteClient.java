@@ -17,8 +17,9 @@
 package com.haulmont.addon.globalevents.portal;
 
 import com.haulmont.addon.globalevents.GlobalApplicationEvent;
-import com.haulmont.addon.globalevents.client.AbstractWebSocketClient;
-import com.haulmont.addon.globalevents.client.NoServersException;
+import com.haulmont.addon.globalevents.transport.AbstractWebSocketClient;
+import com.haulmont.addon.globalevents.transport.NoServersException;
+import com.haulmont.addon.globalevents.transport.WebSocketAuthData;
 import com.haulmont.cuba.core.sys.AppContext;
 import com.haulmont.cuba.core.sys.events.AppContextStartedEvent;
 import com.haulmont.cuba.core.sys.events.AppContextStoppedEvent;
@@ -31,7 +32,7 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import java.util.UUID;
 
-@Component("cubaglevt_PortalWebSocketClient")
+@Component("cubaglevt_PortalRemoteClient")
 public class PortalRemoteClient extends AbstractWebSocketClient {
 
     private static final Logger log = LoggerFactory.getLogger(PortalRemoteClient.class);
@@ -43,8 +44,8 @@ public class PortalRemoteClient extends AbstractWebSocketClient {
     private PortalBroadcaster portalBroadcaster;
 
     @Override
-    protected String getAuthMessageContent() {
-        return portalConfig.getTrustedClientPassword();
+    protected WebSocketAuthData getAuthMessageContent() {
+        return new WebSocketAuthData(portalConfig.getTrustedClientPassword());
     }
 
     @Override

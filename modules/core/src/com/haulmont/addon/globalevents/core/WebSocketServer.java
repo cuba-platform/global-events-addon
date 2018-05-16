@@ -18,8 +18,10 @@ package com.haulmont.addon.globalevents.core;
 
 
 import com.haulmont.addon.globalevents.GlobalApplicationEvent;
+import com.haulmont.addon.globalevents.transport.WebSocketAuthData;
 import com.haulmont.cuba.core.app.ServerConfig;
 import com.haulmont.cuba.core.sys.serialization.SerializationSupport;
+import com.haulmont.cuba.security.app.UserSessionsAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -46,18 +48,21 @@ public class WebSocketServer extends TextWebSocketHandler {
     @Inject
     private ServerConfig serverConfig;
 
+    @Inject
+    private UserSessionsAPI userSessions;
+
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         log.debug("Received {} from {}", message, session);
         Boolean authenticated = sessions.get(session);
         if (authenticated != null) {
             if (!authenticated) {
-                String payload = message.getPayload();
-                if (serverConfig.getTrustedClientPassword().equals(payload)) {
+                boolean valid = checkAuthenticationMessage(session, message.getPayload());
+                if (valid) {
                     sessions.put(session, true);
                     log.debug("Authenticated session: " + session);
                 } else {
-                    log.warn("Invalid credentials, removing session " + session);
+                    log.debug("Removing session " + session);
                     sessions.remove(session);
                 }
             } else {
@@ -65,6 +70,30 @@ public class WebSocketServer extends TextWebSocketHandler {
             }
         } else {
             log.warn("Unknown session: " + session);
+        }
+    }
+
+    private boolean checkAuthenticationMessage(WebSocketSession session, String payload) {
+        try {
+            byte[] bytes = Base64.getDecoder().decode(payload.getBytes("UTF-8"));
+            Object authObject = SerializationSupport.deserialize(bytes);
+            if (authObject instanceof WebSocketAuthData) {
+                WebSocketAuthData authData = (WebSocketAuthData) authObject;
+                if (authData.getTrustedClientPassword() != null) {
+                    return serverConfig.getTrustedClientPassword().equals(authData.getTrustedClientPassword());
+                } else if (authData.getUserSessionId() != null) {
+                    return userSessions.get(authData.getUserSessionId()) != null;
+                } else {
+                    log.warn("Unable to authenticate session {}. Invalid auth data: {}", session, authObject);
+                    return false;
+                }
+            } else {
+                log.warn("Unable to authenticate session {}. Invalid auth data type: {}", session, authObject.getClass());
+                return false;
+            }
+        } catch (Exception e) {
+            log.error("Unable to authenticate session {}", session, e);
+            return false;
         }
     }
 

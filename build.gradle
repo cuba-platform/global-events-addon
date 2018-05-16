@@ -214,7 +214,8 @@ configure(desktopModule) {
 
     dependencies {
         compile(globalModule)
-        
+        compile(bom['com.fasterxml.jackson.core:jackson-databind'])
+        runtime('org.glassfish.tyrus.bundles:tyrus-standalone-client-jdk:1.13.1')
     }
     assemble.dependsOn = [ classes ]
 

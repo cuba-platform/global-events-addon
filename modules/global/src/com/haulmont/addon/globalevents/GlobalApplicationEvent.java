@@ -22,8 +22,10 @@ import java.util.UUID;
 
 public class GlobalApplicationEvent extends ApplicationEvent {
 
+    // TODO change to int
     private UUID serverOrigin;
 
+    // TODO change to int
     private UUID clientOrigin;
 
     /**

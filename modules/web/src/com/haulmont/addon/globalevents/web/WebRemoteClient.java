@@ -17,8 +17,9 @@
 package com.haulmont.addon.globalevents.web;
 
 import com.haulmont.addon.globalevents.GlobalApplicationEvent;
-import com.haulmont.addon.globalevents.client.AbstractWebSocketClient;
-import com.haulmont.addon.globalevents.client.NoServersException;
+import com.haulmont.addon.globalevents.transport.AbstractWebSocketClient;
+import com.haulmont.addon.globalevents.transport.NoServersException;
+import com.haulmont.addon.globalevents.transport.WebSocketAuthData;
 import com.haulmont.cuba.core.sys.events.AppContextStoppedEvent;
 import com.haulmont.cuba.web.WebConfig;
 import com.haulmont.cuba.web.auth.WebAuthConfig;
@@ -29,7 +30,7 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import java.util.UUID;
 
-@Component("cubaglevt_WebSocketClient")
+@Component("cubaglevt_WebRemoteClient")
 public class WebRemoteClient extends AbstractWebSocketClient {
 
     @Inject
@@ -45,8 +46,8 @@ public class WebRemoteClient extends AbstractWebSocketClient {
     private WebBroadcaster webBroadcaster;
 
     @Override
-    protected String getAuthMessageContent() {
-        return webAuthConfig.getTrustedClientPassword();
+    protected WebSocketAuthData getAuthMessageContent() {
+        return new WebSocketAuthData(webAuthConfig.getTrustedClientPassword());
     }
 
     @Override

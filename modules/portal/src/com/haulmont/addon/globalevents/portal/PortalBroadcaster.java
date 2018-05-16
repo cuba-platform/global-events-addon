@@ -17,7 +17,7 @@
 package com.haulmont.addon.globalevents.portal;
 
 import com.haulmont.addon.globalevents.GlobalApplicationEvent;
-import com.haulmont.addon.globalevents.service.GlobalEventsService;
+import com.haulmont.addon.globalevents.transport.GlobalEventsService;
 import com.haulmont.cuba.core.sys.AppContext;
 import com.haulmont.cuba.core.sys.SecurityContext;
 import com.haulmont.cuba.portal.config.PortalConfig;

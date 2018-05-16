@@ -17,6 +17,7 @@
 package com.haulmont.addon.globalevents.service;
 
 import com.haulmont.addon.globalevents.GlobalApplicationEvent;
+import com.haulmont.addon.globalevents.transport.GlobalEventsService;
 import com.haulmont.cuba.core.global.Events;
 import org.springframework.stereotype.Service;
 

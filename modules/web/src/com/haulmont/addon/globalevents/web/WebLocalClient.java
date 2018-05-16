@@ -34,7 +34,7 @@ import javax.inject.Inject;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Component("cubaglevt_LocalClient")
+@Component("cubaglevt_WebLocalClient")
 public class WebLocalClient {
 
     private static final Logger log = LoggerFactory.getLogger(WebLocalClient.class);

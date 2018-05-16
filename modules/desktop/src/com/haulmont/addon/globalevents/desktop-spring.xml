@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd"
        xmlns:task="http://www.springframework.org/schema/task">
-    <!-- Background Tasks -->
-    <!--<bean id="backgroundWorkerScheduler" class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">-->
-    <!--<property name="daemon" value="true"/>-->
-    <!--<property name="poolSize" value="1"/>-->
-    <!--</bean>-->
-    <!--<task:scheduled-tasks scheduler="backgroundWorkerScheduler">-->
-    <!--<task:scheduled ref="cuba_BackgroundWorker_WatchDog" method="cleanupTasks" fixed-delay="2000"/>-->
-    <!--</task:scheduled-tasks>-->
+
+    <context:component-scan base-package="com.haulmont.addon.globalevents"/>
+
     <bean class="com.haulmont.cuba.core.sys.remoting.RemoteProxyBeanCreator">
         <property name="serverSelector"
                   ref="cuba_ServerSelector"/>
         <property name="remoteServices">
             <map>
                 <entry key="cubaglevt_GlobalEventsService"
-                       value="com.haulmont.addon.globalevents.service.GlobalEventsService"/>
+                       value="com.haulmont.addon.globalevents.transport.GlobalEventsService"/>
             </map>
         </property>
     </bean>

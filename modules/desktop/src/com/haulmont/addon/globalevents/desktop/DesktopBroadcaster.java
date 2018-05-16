@@ -14,54 +14,36 @@
  * limitations under the License.
  */
 
-package com.haulmont.addon.globalevents.web;
+package com.haulmont.addon.globalevents.desktop;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.haulmont.addon.globalevents.GlobalApplicationEvent;
 import com.haulmont.addon.globalevents.GlobalUiEvent;
 import com.haulmont.addon.globalevents.transport.GlobalEventsService;
+import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.core.sys.AppContext;
 import com.haulmont.cuba.core.sys.SecurityContext;
-import com.haulmont.cuba.core.sys.events.AppContextStoppedEvent;
-import com.haulmont.cuba.security.app.TrustedClientService;
-import com.haulmont.cuba.security.global.LoginException;
-import com.haulmont.cuba.security.global.UserSession;
-import com.haulmont.cuba.web.auth.WebAuthConfig;
+import com.haulmont.cuba.desktop.App;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import javax.swing.*;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-@Component("cubaglevt_WebBroadcaster")
-public class WebBroadcaster {
+@Component("cubaglevt_DesktopBroadcaster")
+public class DesktopBroadcaster {
 
-    private static final Logger log = LoggerFactory.getLogger(WebBroadcaster.class);
+    private static final Logger log = LoggerFactory.getLogger(DesktopBroadcaster.class);
 
     private UUID origin = UUID.randomUUID();
-
-    @Inject
-    private GlobalUiEvents globalUiEvents;
 
     @Inject
     private GlobalEventsService globalEventsService;
 
     @Inject
-    private TrustedClientService trustedClientService;
-
-    @Inject
-    private WebAuthConfig webAuthConfig;
-
-    private ExecutorService executor = Executors.newFixedThreadPool(5,
-            new ThreadFactoryBuilder()
-                    .setDaemon(true)
-                    .setNameFormat("GE-WebBroadcaster-%d")
-                    .setThreadFactory(Executors.defaultThreadFactory())
-                    .build());
+    private UserSessionSource userSessionSource;
 
     public UUID getOrigin() {
         return origin;
@@ -80,22 +62,13 @@ public class WebBroadcaster {
         event.setClientOrigin(origin);
 
         if (event instanceof GlobalUiEvent) {
-            // decouple from the calling thread
-            executor.submit(() -> globalUiEvents.publish(event));
+            SwingUtilities.invokeLater(() -> {
+                App.getInstance().getUiEventsMulticaster().multicastEvent(event);
+            });
         }
 
-        UserSession session;
-        try {
-            session = trustedClientService.getSystemSession(webAuthConfig.getTrustedClientPassword());
-        } catch (LoginException e) {
-            throw new RuntimeException("Unable to get system session for sending global event", e);
-        }
-        AppContext.withSecurityContext(new SecurityContext(session), () ->
+        // in case we are not in EDT
+        AppContext.withSecurityContext(new SecurityContext(userSessionSource.getUserSession()), () ->
                 globalEventsService.sendEvent(event));
-    }
-
-    @EventListener(AppContextStoppedEvent.class)
-    public void dispose() {
-        executor.shutdownNow();
     }
 }

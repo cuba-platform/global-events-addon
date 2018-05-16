@@ -11,7 +11,7 @@
         <property name="remoteServices">
             <map>
                 <entry key="cubaglevt_GlobalEventsService"
-                       value="com.haulmont.addon.globalevents.service.GlobalEventsService"/>
+                       value="com.haulmont.addon.globalevents.transport.GlobalEventsService"/>
             </map>
         </property>
     </bean>

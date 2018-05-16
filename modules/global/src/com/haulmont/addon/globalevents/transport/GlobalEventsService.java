@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.haulmont.addon.globalevents.client;
+package com.haulmont.addon.globalevents.transport;
 
-public class NoServersException extends Exception {
+import com.haulmont.addon.globalevents.GlobalApplicationEvent;
 
-    public NoServersException(String message) {
-        super(message);
-    }
+public interface GlobalEventsService {
+    String NAME = "cubaglevt_GlobalEventsService";
+
+    void sendEvent(GlobalApplicationEvent event);
 }

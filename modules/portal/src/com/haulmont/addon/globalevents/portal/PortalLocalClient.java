@@ -33,7 +33,7 @@ import javax.inject.Inject;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Component("cubaglevt_LocalClient")
+@Component("cubaglevt_PortalLocalClient")
 public class PortalLocalClient {
 
     private static final Logger log = LoggerFactory.getLogger(PortalLocalClient.class);
