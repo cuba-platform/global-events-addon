@@ -209,39 +209,12 @@ configure(webModule) {
 }
 
 configure(desktopModule) {
-    apply(plugin: 'application')
-    mainClassName = 'com.haulmont.addon.globalevents.desktop.App'
-
     dependencies {
         compile(globalModule)
         compile(bom['com.fasterxml.jackson.core:jackson-databind'])
         runtime('org.glassfish.tyrus.bundles:tyrus-standalone-client-jdk:1.13.1')
     }
     assemble.dependsOn = [ classes ]
-
-    jar {
-        manifest {
-            attributes("Permissions": "all-permissions")
-        }
-    }
-
-    installDist {
-        into("${projectDir}/../../deploy/" + applicationName)
-    }
-
-    task deploy(dependsOn: installDist)
-
-    task createWebStart(dependsOn: [assemble, jar], type: CubaWebStartCreation) {
-        signJarsKeystore = "${projectDir}/webstart/sign-jars-keystore.jks"
-        signJarsAlias = 'signJars'
-        signJarsPassword = 'HaulmontSignJars'
-        indexFileName = "${projectDir}/webstart/index.html"
-        basePath = "${modulePrefix}-webstart"
-    }
-
-    task deployWebStart(dependsOn: createWebStart, type: CubaWebStartDeployment) {
-        basePath = "${modulePrefix}-webstart"
-    }
 }
 
 configure(portalModule) {
