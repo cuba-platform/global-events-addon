@@ -2,7 +2,7 @@
 
 ## Overview
 
-The standard CUBA [Events](https://doc.cuba-platform.com/manual-latest/events.html) interface allows you to publish events that can be receved by subscribers within the same application block. So there is no ability to notify clients from middleware or propagate an event in the cluster.   
+The standard CUBA [Events](https://doc.cuba-platform.com/manual-latest/events.html) interface allows you to publish events that can be received by subscribers within the same application block. So there are no built-in facilities for notifying clients from middleware or propagating events in the cluster.
  
 The Global Events add-on enables receiving Spring's application events on any application block of the distributed system. In the simplest configuration with `core` and `web` blocks running in a single JVM, it allows you to send events from `core` to `web` to notify UI screens or managed beans. In a cluster environment, an event published inside a block, will be received on all other connected parts of the system: on all middleware blocks and on the clients: `web`, `portal` and `desktop`.
 
