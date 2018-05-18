@@ -28,7 +28,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.UUID;
 
 @Component("cubaglevt_WebRemoteClient")
 public class WebRemoteClient extends AbstractWebSocketClient {
@@ -51,7 +50,7 @@ public class WebRemoteClient extends AbstractWebSocketClient {
     }
 
     @Override
-    protected UUID getCurrentClientOrigin() {
+    protected Object getCurrentClientOrigin() {
         return webBroadcaster.getOrigin();
     }
 

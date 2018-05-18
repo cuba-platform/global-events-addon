@@ -33,7 +33,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.UUID;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -42,7 +42,7 @@ public class WebBroadcaster {
 
     private static final Logger log = LoggerFactory.getLogger(WebBroadcaster.class);
 
-    private UUID origin = UUID.randomUUID();
+    private Integer origin = new Random().nextInt();
 
     @Inject
     private GlobalUiEvents globalUiEvents;
@@ -63,21 +63,21 @@ public class WebBroadcaster {
                     .setThreadFactory(Executors.defaultThreadFactory())
                     .build());
 
-    public UUID getOrigin() {
+    public Integer getOrigin() {
         return origin;
     }
 
     @EventListener
     public void onGlobalEvent(GlobalApplicationEvent event) {
-        if (event.getClientOrigin() != null) {
+        if (event.getEventOrigin().fromClient()) {
             log.debug("Event from another client, ignoring it");
             return;
         }
-        if (event.getServerOrigin() != null) {
+        if (event.getEventOrigin().fromServer()) {
             log.debug("Event from server, ignoring it");
             return;
         }
-        event.setClientOrigin(origin);
+        event.getEventOrigin().setClient(origin);
 
         if (event instanceof GlobalUiEvent) {
             // decouple from the calling thread

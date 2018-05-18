@@ -16,5 +16,8 @@
 
 package com.haulmont.addon.globalevents;
 
+/**
+ * Marker interface for {@link GlobalApplicationEvent}s that must be received by Generic UI screens in web blocks.
+ */
 public interface GlobalUiEvent {
 }

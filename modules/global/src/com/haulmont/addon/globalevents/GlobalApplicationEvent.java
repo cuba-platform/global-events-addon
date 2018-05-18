@@ -16,17 +16,15 @@
 
 package com.haulmont.addon.globalevents;
 
+import com.haulmont.addon.globalevents.transport.EventOrigin;
 import org.springframework.context.ApplicationEvent;
 
-import java.util.UUID;
-
+/**
+ * Base class for application events that must be propagated to all connected blocks of the application.
+ */
 public class GlobalApplicationEvent extends ApplicationEvent {
 
-    // TODO change to int
-    private UUID serverOrigin;
-
-    // TODO change to int
-    private UUID clientOrigin;
+    private EventOrigin eventOrigin = new EventOrigin();
 
     /**
      * Create a new ApplicationEvent.
@@ -37,19 +35,10 @@ public class GlobalApplicationEvent extends ApplicationEvent {
         super(source);
     }
 
-    public UUID getServerOrigin() {
-        return serverOrigin;
-    }
-
-    public void setServerOrigin(UUID serverOrigin) {
-        this.serverOrigin = serverOrigin;
-    }
-
-    public UUID getClientOrigin() {
-        return clientOrigin;
-    }
-
-    public void setClientOrigin(UUID clientOrigin) {
-        this.clientOrigin = clientOrigin;
+    /**
+     * INTERNAL
+     */
+    public EventOrigin getEventOrigin() {
+        return eventOrigin;
     }
 }

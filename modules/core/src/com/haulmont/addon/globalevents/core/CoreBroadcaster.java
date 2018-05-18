@@ -26,14 +26,14 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.UUID;
+import java.util.Random;
 
 @Component("cubaglevt_CoreBroadcaster")
 public class CoreBroadcaster {
 
     private static final Logger log = LoggerFactory.getLogger(CoreBroadcaster.class);
 
-    private UUID origin = UUID.randomUUID();
+    private Integer origin = new Random().nextInt();
 
     @Inject
     private WebSocketServer webSocketServer;
@@ -60,8 +60,8 @@ public class CoreBroadcaster {
 
     @EventListener
     public void onGlobalEvent(GlobalApplicationEvent event) {
-        if (event.getServerOrigin() == null) {
-            event.setServerOrigin(origin);
+        if (!event.getEventOrigin().fromServer()) {
+            event.getEventOrigin().setServer(origin);
             clusterManagerAPI.send(new GlobalEventClusterMessage(event));
         }
         localServer.sendEvent(event);

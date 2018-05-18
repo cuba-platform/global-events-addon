@@ -27,7 +27,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.swing.*;
-import java.util.UUID;
 
 @Component("cubaglevt_DesktopRemoteClient")
 public class DesktopRemoteClient extends AbstractWebSocketClient {
@@ -44,7 +43,7 @@ public class DesktopRemoteClient extends AbstractWebSocketClient {
     }
 
     @Override
-    protected UUID getCurrentClientOrigin() {
+    protected Object getCurrentClientOrigin() {
         return desktopBroadcaster.getOrigin();
     }
 

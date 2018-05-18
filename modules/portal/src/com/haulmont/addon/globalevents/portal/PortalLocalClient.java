@@ -68,7 +68,7 @@ public class PortalLocalClient {
     public void onMessage(byte[] message) {
         GlobalApplicationEvent event = (GlobalApplicationEvent) SerializationSupport.deserialize(message);
 
-        if (portalBroadcaster.getOrigin().equals(event.getClientOrigin())) {
+        if (event.getEventOrigin().sameClient(portalBroadcaster.getOrigin())) {
             log.debug("Received own event, ignoring it");
             return;
         }

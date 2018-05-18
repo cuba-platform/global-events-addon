@@ -73,7 +73,7 @@ public class WebLocalClient {
     public void onMessage(byte[] message) {
         GlobalApplicationEvent event = (GlobalApplicationEvent) SerializationSupport.deserialize(message);
 
-        if (webBroadcaster.getOrigin().equals(event.getClientOrigin())) {
+        if (event.getEventOrigin().sameClient(webBroadcaster.getOrigin())) {
             log.debug("Received own event, ignoring it");
             return;
         }

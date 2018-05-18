@@ -30,14 +30,14 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.UUID;
+import java.util.Random;
 
 @Component("cubaglevt_PortalBroadcaster")
 public class PortalBroadcaster {
 
     private static final Logger log = LoggerFactory.getLogger(PortalBroadcaster.class);
 
-    private UUID origin = UUID.randomUUID();
+    private int origin = new Random().nextInt();
 
     @Inject
     private GlobalEventsService globalEventsService;
@@ -48,21 +48,21 @@ public class PortalBroadcaster {
     @Inject
     private PortalConfig portalConfig;
 
-    public UUID getOrigin() {
+    public int getOrigin() {
         return origin;
     }
 
     @EventListener
     public void onGlobalEvent(GlobalApplicationEvent event) {
-        if (event.getClientOrigin() != null) {
+        if (event.getEventOrigin().fromClient()) {
             log.debug("Event from another client, ignoring it");
             return;
         }
-        if (event.getServerOrigin() != null) {
+        if (event.getEventOrigin().fromServer()) {
             log.debug("Event from server, ignoring it");
             return;
         }
-        event.setClientOrigin(origin);
+        event.getEventOrigin().setClient(origin);
 
         UserSession session;
         try {

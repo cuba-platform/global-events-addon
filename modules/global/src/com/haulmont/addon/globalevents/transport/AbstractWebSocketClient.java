@@ -40,7 +40,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public abstract class AbstractWebSocketClient {
@@ -57,7 +56,7 @@ public abstract class AbstractWebSocketClient {
 
     protected abstract WebSocketAuthData getAuthMessageContent();
 
-    protected abstract UUID getCurrentClientOrigin();
+    protected abstract Object getCurrentClientOrigin();
 
     protected abstract void publishGlobalUiEvent(GlobalApplicationEvent event);
 
@@ -135,7 +134,7 @@ public abstract class AbstractWebSocketClient {
     }
 
     private void publishEvent(GlobalApplicationEvent event) {
-        if (getCurrentClientOrigin().equals(event.getClientOrigin())) {
+        if (event.getEventOrigin().sameClient(getCurrentClientOrigin())) {
             log.debug("Received own event, ignoring it");
             return;
         }
