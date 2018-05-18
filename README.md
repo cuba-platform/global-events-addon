@@ -1,4 +1,4 @@
-# Global Events Add-on
+# Global Events Add-on (work in progress)
 
 ## Overview
 
