@@ -1,4 +1,4 @@
-# Global Events Add-on (work in progress)
+# Global Events Add-on
 
 ## Overview
 
@@ -6,13 +6,11 @@ The standard CUBA [Events](https://doc.cuba-platform.com/manual-latest/events.ht
  
 The Global Events add-on enables receiving Spring's application events on any application block of the distributed system. In the simplest configuration with `core` and `web` blocks running in a single JVM, it allows you to send events from `core` to `web` to notify UI screens or managed beans. In a cluster environment, an event published inside a block, will be received on all other connected parts of the system: on all middleware blocks and on the clients: `web`, `portal` and `desktop`.
 
-In case of the client is deployed in the same JVM as middleware and `cuba.useLocalServiceInvocation` application property is set to `true`, it registers a callback in the `LocalRegistry` class located in the `shared-lib` module which is accessible to both middleware and the client:
+In case of the client is deployed in the same JVM as middleware and `cuba.useLocalServiceInvocation` application property is set to `true`, it registers a callback in the `LocalRegistry` class located in the `shared-lib` module which is accessible to both middleware and the client.
+
+In a distributed environment, clients open WebSocket connections to the middleware blocks, and middleware exchange events in a usual way using the cluster communication mechanism.
  
-![Local Interaction](etc/local-interaction.png)
-
-In a distributed environment, clients open WebSocket connections to the middleware blocks, and middleware exchange events in a usual way using the cluster communication mechanism:
-
-![Cluster Interaction](etc/cluster-interaction.png)
+![Global Events](etc/global-events.png)
 
 ## Usage
 
@@ -24,7 +22,7 @@ Select a version of the add-on which is compatible with the platform version use
 
 Add custom application component to your project (change the version part if needed):
 
-`com.haulmont.addon.globalevents:cubaglevt-global:0.1.0`
+`com.haulmont.addon.globalevents:cubaglevt-global:0.1.1`
 
 Your global event classes must be inherited from `com.haulmont.addon.globalevents.GlobalApplicationEvent`, for example:
 
@@ -70,6 +68,10 @@ If you want to send event to Generic UI screens of connected `web` blocks, add t
     }
 
 Send global events using the standard `Events.publish()` method, and they will be received by subscribers running on all blocks of your distributed application.
+
+## Known Issues
+
+In the distributed deployment, web client opens WebSocket connection to middleware on the first browser connection. So if some `web` bean is subscribed to a global event, it will start to receive notifications only after at least one user connects to it.  
 
 ## Testing
 
