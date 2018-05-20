@@ -69,10 +69,20 @@ If you want to send event to Generic UI screens of connected `web` blocks, add t
 
 Send global events using the standard `Events.publish()` method, and they will be received by subscribers running on all blocks of your distributed application.
 
-## Known Issues
+In the distributed deployment, it is recommended to suppress DEBUG log messages from `WebSocketDispatcherServlet` by adding the following line to `logback.xml`:
 
-In the distributed deployment, web client opens WebSocket connection to middleware on the first browser connection. So if some `web` bean is subscribed to a global event, it will start to receive notifications only after at least one user connects to it.  
+    <logger name="com.haulmont.addon.globalevents.core.WebSocketDispatcherServlet" level="INFO"/> 
+
+## Features
+
+1. Events are delivered to other blocks asynchronously, including the local deployment. 
+
+2. Ordering is accurate only within a block.
+
+3. Delivery in a distributed deployment is guaranteed "at most once", i.e. there is no retransmit, etc.
+
+4. In the distributed deployment, web client opens WebSocket connection to middleware on the first browser connection. So if some `web` bean is subscribed to a global event, it will start to receive notifications only after at least one user connects to it.  
 
 ## Testing
 
-The [global-events-demo](https://github.com/cuba-platform/global-events-demo) project contains usage examples and system tests.
+The [global-events-demo](https://github.com/cuba-platform/global-events-demo) project contains usage examples and automatic system tests.
