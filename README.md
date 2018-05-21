@@ -26,46 +26,50 @@ Add custom application component to your project (change the version part if nee
 
 Your global event classes must be inherited from `com.haulmont.addon.globalevents.GlobalApplicationEvent`, for example:
 
-    package com.company.sample;
-    
-    import com.haulmont.addon.globalevents.GlobalApplicationEvent;
-    
-    public class MyGlobalEvent extends GlobalApplicationEvent {
-        
-        private String payload;
-    
-        public MyGlobalEvent(Object source, String payload) {
-            super(source);
-            this.payload = payload;
-        }
-    
-        public String getPayload() {
-            return payload;
-        }
+```java
+package com.company.sample;
+
+import com.haulmont.addon.globalevents.GlobalApplicationEvent;
+
+public class MyGlobalEvent extends GlobalApplicationEvent {
+
+    private String payload;
+
+    public MyGlobalEvent(Object source, String payload) {
+        super(source);
+        this.payload = payload;
     }
+
+    public String getPayload() {
+        return payload;
+    }
+}
+```
 
 Make sure all fields of the event class are serializable! 
 
 If you want to send event to Generic UI screens of connected `web` blocks, add the `GlobalUiEvent` marker interface to the event class:
 
-    package com.company.sample;
-    
-    import com.haulmont.addon.globalevents.GlobalApplicationEvent;
-    import com.haulmont.addon.globalevents.GlobalUiEvent;
-    
-    public class MyUiNotificationEvent extends GlobalApplicationEvent implements GlobalUiEvent {
-        
-        private String message;
-    
-        public MyUiNotificationEvent(Object source, String message) {
-            super(source);
-            this.message = message;
-        }
-    
-        public String getMessage() {
-            return message;
-        }
+```java
+package com.company.sample;
+
+import com.haulmont.addon.globalevents.GlobalApplicationEvent;
+import com.haulmont.addon.globalevents.GlobalUiEvent;
+
+public class MyUiNotificationEvent extends GlobalApplicationEvent implements GlobalUiEvent {
+
+    private String message;
+
+    public MyUiNotificationEvent(Object source, String message) {
+        super(source);
+        this.message = message;
     }
+
+    public String getMessage() {
+        return message;
+    }
+}
+```
 
 Send global events using the standard `Events.publish()` method, and they will be received by subscribers running on all blocks of your distributed application.
 
