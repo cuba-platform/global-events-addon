@@ -18,11 +18,12 @@ Select a version of the add-on which is compatible with the platform version use
 
 | Platform Version | Add-on Version |
 | ---------------- | -------------- |
+| 6.9.x            | 0.2.0          |
 | 6.8.x            | 0.1.1          |
 
 Add custom application component to your project (change the version part if needed):
 
-`com.haulmont.addon.globalevents:cubaglevt-global:0.1.1`
+`com.haulmont.addon.globalevents:cubaglevt-global:0.2.0`
 
 Your global event classes must be inherited from `com.haulmont.addon.globalevents.GlobalApplicationEvent`, for example:
 
