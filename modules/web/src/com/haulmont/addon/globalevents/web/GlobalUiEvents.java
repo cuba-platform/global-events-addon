@@ -64,7 +64,7 @@ public class GlobalUiEvents {
 
         for (VaadinSession session : activeSessions) {
             // obtain lock on session state
-            session.accessSynchronously(() -> {
+            session.access(() -> {
                 if (session.getState() == VaadinSession.State.OPEN) {
                     // active app in this session
                     App app = App.getInstance();
