@@ -47,7 +47,7 @@ public class MyGlobalEvent extends GlobalApplicationEvent {
 }
 ```
 
-Make sure all fields of the event class are serializable! 
+Make sure all fields of the event class are serializable! Also, do not ever use the `source` field to store and transfer any data, as it is transient and will not be preserved when the event is sent to another application block.
 
 If you want to send event to Generic UI screens of connected `web` blocks, add the `GlobalUiEvent` marker interface to the event class:
 
