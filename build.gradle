@@ -1,6 +1,6 @@
 
 buildscript {
-    ext.cubaVersion = '6.9.0'
+    ext.cubaVersion = '6.10.0'
     repositories {
         
         maven {
@@ -41,7 +41,7 @@ apply(plugin: 'cuba')
 cuba {
     artifact {
         group = 'com.haulmont.addon.globalevents'
-        version = "0.2.1"
+        version = "0.3.0"
         isSnapshot = false
     }
     tomcat {
@@ -98,7 +98,9 @@ configure(globalModule) {
         compile('org.springframework:spring-websocket:' + bom.getVersion('org.springframework', 'spring-core'))
     }
 
-    task enhance(type: CubaEnhancing)
+    entitiesEnhancing {
+        main { enabled = true }
+    }
 
     jar {
         manifest {
