@@ -92,3 +92,7 @@ In the distributed deployment, it is recommended to suppress DEBUG log messages 
 ## Testing
 
 The [global-events-demo](https://github.com/cuba-platform/global-events-demo) project contains usage examples and automatic system tests.
+
+## Known Issues
+
+* If the messages are not received and you see in the logs the message like this: `The decoded text message was too big for the output buffer and the endpoint does not support partial messages`, see [this topic](https://www.cuba-platform.com/discuss/t/unable-to-receive-globalevent-separate-tomcat-for-app-war-app-core-war/7149) for the solution.
