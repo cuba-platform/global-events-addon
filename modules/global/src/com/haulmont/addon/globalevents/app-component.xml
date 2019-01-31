@@ -20,7 +20,7 @@
                   value="+com/haulmont/addon/globalevents/spring.xml"/>
     </module>
     <module blocks="web"
-            dependsOn="global,shared-lib"
+            dependsOn="global"
             name="web">
         <artifact appJar="true"
                   name="cubaglevt-web"/>
@@ -30,13 +30,6 @@
                   name="cubaglevt-web"/>
         <property name="cuba.springContextConfig"
                   value="+com/haulmont/addon/globalevents/web-spring.xml"/>
-    </module>
-    <module blocks="desktop"
-            dependsOn="global"
-            name="desktop">
-        <artifact name="cubaglevt-desktop"/>
-        <property name="cuba.springContextConfig"
-                  value="+com/haulmont/addon/globalevents/desktop-spring.xml"/>
     </module>
     <module blocks="portal"
             dependsOn="global,shared-lib"

@@ -1,6 +1,6 @@
 
 buildscript {
-    ext.cubaVersion = '6.10.0'
+    ext.cubaVersion = '7.0.0'
     repositories {
         
         maven {
@@ -23,7 +23,6 @@ def globalModule = project(":${modulePrefix}-global")
 def coreModule = project(":${modulePrefix}-core")
 def webModule = project(":${modulePrefix}-web")
 def sharedLibModule = project(":${modulePrefix}-shared-lib")
-def desktopModule = project(":${modulePrefix}-desktop")
 def portalModule = project(":${modulePrefix}-portal")
 
 def servletApi = 'javax.servlet:javax.servlet-api:3.1.0'
@@ -41,7 +40,7 @@ apply(plugin: 'cuba')
 cuba {
     artifact {
         group = 'com.haulmont.addon.globalevents'
-        version = "0.3.0"
+        version = "0.4.0"
         isSnapshot = false
     }
     tomcat {
@@ -49,7 +48,7 @@ cuba {
     }
     ide {
         vcs = 'Git'
-        copyright = '''Copyright (c) 2008-2018 Haulmont.
+        copyright = '''Copyright (c) 2008-2019 Haulmont.
  
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -72,7 +71,7 @@ dependencies {
 
 def hsql = 'org.hsqldb:hsqldb:2.2.9'
 
-configure([globalModule, coreModule, webModule, sharedLibModule, desktopModule, portalModule]) {
+configure([globalModule, coreModule, webModule, sharedLibModule, portalModule]) {
     apply(plugin: 'java')
     apply(plugin: 'maven')
     apply(plugin: 'idea')
@@ -122,7 +121,7 @@ configure(coreModule) {
     dependencies {
         compile(globalModule)
         compile(sharedLibModule)
-        provided(servletApi)
+        compileOnly(servletApi)
         jdbc(hsql)
         testRuntime(hsql)
         compile(bom['com.fasterxml.jackson.core:jackson-databind'])
@@ -167,7 +166,7 @@ configure(webModule) {
     }
 
     dependencies {
-        provided(servletApi)
+        compileOnly(servletApi)
         compile(globalModule)
         compile(sharedLibModule)
     }
@@ -210,18 +209,9 @@ configure(webModule) {
     }
 }
 
-configure(desktopModule) {
-    dependencies {
-        compile(globalModule)
-        compile(bom['com.fasterxml.jackson.core:jackson-databind'])
-        runtime('org.glassfish.tyrus.bundles:tyrus-standalone-client-jdk:1.13.1')
-    }
-    assemble.dependsOn = [ classes ]
-}
-
 configure(portalModule) {
     dependencies {
-        provided(servletApi)
+        compileOnly(servletApi)
         compile(globalModule)
         compile(sharedLibModule)
     }
@@ -297,5 +287,5 @@ task restart(dependsOn: ['stop', ":${modulePrefix}-core:deploy", ":${modulePrefi
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.3.1'
+    gradleVersion = '4.10.1'
 }

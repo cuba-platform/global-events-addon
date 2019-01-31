@@ -4,7 +4,7 @@
 
 The standard CUBA [Events](https://doc.cuba-platform.com/manual-latest/events.html) interface allows you to publish events that can be received by subscribers within the same application block. So there are no built-in facilities for notifying clients from middleware or propagating events in the cluster.
  
-The Global Events add-on enables receiving Spring's application events on any application block of the distributed system. In the simplest configuration with `core` and `web` blocks running in a single JVM, it allows you to send events from `core` to `web` to notify UI screens or managed beans. In a cluster environment, an event published inside a block, will be received on all other connected parts of the system: on all middleware blocks and on the clients: `web`, `portal` and `desktop`.
+The Global Events add-on enables receiving Spring's application events on any application block of the distributed system. In the simplest configuration with `core` and `web` blocks running in a single JVM, it allows you to send events from `core` to `web` to notify UI screens or managed beans. In a cluster environment, an event published inside a block, will be received on all other connected parts of the system: on all middleware blocks and on the clients: `web` and `portal`.
 
 In case of the client is deployed in the same JVM as middleware and `cuba.useLocalServiceInvocation` application property is set to `true`, it registers a callback in the `LocalRegistry` class located in the `shared-lib` module which is accessible to both middleware and the client.
 
@@ -18,13 +18,14 @@ Select a version of the add-on which is compatible with the platform version use
 
 | Platform Version | Add-on Version |
 | ---------------- | -------------- |
+| 7.0.x            | 0.4.0          |
 | 6.10.x           | 0.3.0          |
 | 6.9.x            | 0.2.1          |
 | 6.8.x            | 0.1.1          |
 
 Add custom application component to your project (change the version part if needed):
 
-`com.haulmont.addon.globalevents:cubaglevt-global:0.3.0`
+`com.haulmont.addon.globalevents:cubaglevt-global:0.4.0`
 
 Your global event classes must be inherited from `com.haulmont.addon.globalevents.GlobalApplicationEvent`, for example:
 
