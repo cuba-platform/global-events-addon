@@ -19,11 +19,13 @@ package com.haulmont.addon.globalevents.transport;
 import com.haulmont.addon.globalevents.GlobalApplicationEvent;
 import com.haulmont.addon.globalevents.GlobalUiEvent;
 import com.haulmont.cuba.core.global.Events;
+import com.haulmont.cuba.core.sys.events.AppContextStartedEvent;
 import com.haulmont.cuba.core.sys.remoting.discovery.ServerSelector;
 import com.haulmont.cuba.core.sys.remoting.discovery.StickySessionServerSelector;
 import com.haulmont.cuba.core.sys.serialization.SerializationSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.event.EventListener;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -54,11 +56,18 @@ public abstract class AbstractWebSocketClient {
     @Inject
     private Events events;
 
+    private ClassLoader classLoader;
+
     protected abstract WebSocketAuthData getAuthMessageContent();
 
     protected abstract Object getCurrentClientOrigin();
 
     protected abstract void publishGlobalUiEvent(GlobalApplicationEvent event);
+
+    @EventListener(AppContextStartedEvent.class)
+    public void initClassLoader() {
+        classLoader = Thread.currentThread().getContextClassLoader();
+    }
 
     public synchronized void connect() throws NoServersException {
         if (webSocketSession != null)
@@ -177,6 +186,7 @@ public abstract class AbstractWebSocketClient {
         protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
             log.debug("Received message {} from {}", message, session);
             try {
+                Thread.currentThread().setContextClassLoader(classLoader);
                 byte[] bytes = Base64.getDecoder().decode(message.getPayload().getBytes("UTF-8"));
                 GlobalApplicationEvent event = (GlobalApplicationEvent) SerializationSupport.deserialize(bytes);
                 publishEvent(event);

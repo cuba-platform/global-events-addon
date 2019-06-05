@@ -58,11 +58,14 @@ public class WebLocalClient {
                     .setThreadFactory(Executors.defaultThreadFactory())
                     .build());
 
+    private ClassLoader classLoader;
+
     @EventListener(AppContextStartedEvent.class)
     public void init() {
         if (webConfig.getUseLocalServiceInvocation()) {
             LocalRegistry.getInstance().addListener(this::onMessage);
         }
+        classLoader = Thread.currentThread().getContextClassLoader();
     }
 
     @EventListener(AppContextStoppedEvent.class)
@@ -80,6 +83,7 @@ public class WebLocalClient {
 
         // decouple from the calling thread
         executor.submit(() -> {
+            Thread.currentThread().setContextClassLoader(classLoader);
             if (event instanceof GlobalUiEvent) {
                 globalUiEvents.publish(event);
             } else {
