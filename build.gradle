@@ -1,6 +1,6 @@
 
 buildscript {
-    ext.cubaVersion = '7.0.0'
+    ext.cubaVersion = '7.1.0'
     repositories {
         
         maven {
@@ -40,7 +40,7 @@ apply(plugin: 'cuba')
 cuba {
     artifact {
         group = 'com.haulmont.addon.globalevents'
-        version = "0.4.1"
+        version = "0.5.0"
         isSnapshot = false
     }
     tomcat {
@@ -169,6 +169,7 @@ configure(webModule) {
         compileOnly(servletApi)
         compile(globalModule)
         compile(sharedLibModule)
+        compile(bom['com.fasterxml.jackson.core:jackson-databind'])
     }
     
     task webArchive(type: Zip) {
@@ -214,6 +215,7 @@ configure(portalModule) {
         compileOnly(servletApi)
         compile(globalModule)
         compile(sharedLibModule)
+        compile(bom['com.fasterxml.jackson.core:jackson-databind'])
     }
 
     def webappName = "${modulePrefix}-portal"
