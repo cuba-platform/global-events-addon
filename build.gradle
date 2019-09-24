@@ -40,7 +40,7 @@ apply(plugin: 'cuba')
 cuba {
     artifact {
         group = 'com.haulmont.addon.globalevents'
-        version = "0.5.0"
+        version = "0.5.1"
         isSnapshot = false
     }
     tomcat {

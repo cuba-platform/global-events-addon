@@ -18,7 +18,7 @@ Select a version of the add-on which is compatible with the platform version use
 
 | Platform Version | Add-on Version |
 | ---------------- | -------------- |
-| 7.1.x            | 0.5.0          |
+| 7.1.x            | 0.5.1          |
 | 7.0.x            | 0.4.0          |
 | 6.10.x           | 0.3.0          |
 | 6.9.x            | 0.2.1          |
