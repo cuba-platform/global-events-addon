@@ -1,6 +1,6 @@
 
 buildscript {
-    ext.cubaVersion = '6.10.0'
+    ext.cubaVersion = '6.8.0'
     repositories {
         
         maven {
@@ -26,7 +26,7 @@ def sharedLibModule = project(":${modulePrefix}-shared-lib")
 def desktopModule = project(":${modulePrefix}-desktop")
 def portalModule = project(":${modulePrefix}-portal")
 
-def servletApi = 'javax.servlet:javax.servlet-api:3.1.0'
+def servletApi = 'org.apache.tomcat:tomcat-servlet-api:8.0.26'
 
 configurations {
     bom
@@ -41,7 +41,7 @@ apply(plugin: 'cuba')
 cuba {
     artifact {
         group = 'com.haulmont.addon.globalevents'
-        version = "0.3.0"
+        version = "0.1.2"
         isSnapshot = false
     }
     tomcat {
@@ -98,9 +98,7 @@ configure(globalModule) {
         compile('org.springframework:spring-websocket:' + bom.getVersion('org.springframework', 'spring-core'))
     }
 
-    entitiesEnhancing {
-        main { enabled = true }
-    }
+    task enhance(type: CubaEnhancing)
 
     jar {
         manifest {
