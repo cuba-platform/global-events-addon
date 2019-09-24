@@ -26,7 +26,9 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -38,28 +40,48 @@ public class GlobalUiEvents {
 
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
-    private final List<VaadinSession> sessions = new ArrayList<>();
+    private final List<WeakReference<VaadinSession>> sessions = new ArrayList<>();
 
     @EventListener
     public void onAppStart(AppStartedEvent event) {
         lock.writeLock().lock();
         try {
-            sessions.add(VaadinSession.getCurrent());
+            sessions.add(new WeakReference<>(VaadinSession.getCurrent()));
         } finally {
             lock.writeLock().unlock();
         }
     }
 
     public void publish(ApplicationEvent event) {
-        ArrayList<VaadinSession> activeSessions;
+        ArrayList<VaadinSession> activeSessions = new ArrayList<>();
 
+        int removed = 0;
         lock.readLock().lock();
         try {
-            activeSessions = new ArrayList<>(sessions);
+            for (Iterator<WeakReference<VaadinSession>> iterator = sessions.iterator(); iterator.hasNext(); ) {
+                WeakReference<VaadinSession> reference = iterator.next();
+                VaadinSession session = reference.get();
+                if (session != null) {
+                    activeSessions.add(session);
+                } else {
+                    lock.readLock().unlock();
+                    lock.writeLock().lock();
+                    try {
+                        iterator.remove();
+                        lock.readLock().lock();
+                    } finally {
+                        lock.writeLock().unlock();
+                    }
+                    removed++;
+                }
+            }
         } finally {
             lock.readLock().unlock();
         }
 
+        if (removed > 0) {
+            log.debug("Removed {} Vaadin sessions", removed);
+        }
         log.debug("Sending {} to {} Vaadin sessions", event, activeSessions.size());
 
         for (VaadinSession session : activeSessions) {
