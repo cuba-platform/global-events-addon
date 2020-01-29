@@ -7,7 +7,7 @@
     <context-param>
         <param-name>appPropertiesConfig</param-name>
         <param-value>
-            
+
             classpath:com/haulmont/addon/globalevents/portal-app.properties
             /WEB-INF/local.app.properties
             "file:${catalina.base}/conf/cubaglevt-portal/local.app.properties"
