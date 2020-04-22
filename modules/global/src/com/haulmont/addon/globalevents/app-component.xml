@@ -5,6 +5,8 @@
             name="global">
         <artifact appJar="true"
                   name="cubaglevt-global"/>
+        <property name="cuba.creditsConfig"
+                  value="+com/haulmont/addon/globalevents/credits.xml"/>
     </module>
     <module blocks="core,web,portal"
             name="shared-lib">

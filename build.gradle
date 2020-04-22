@@ -10,6 +10,16 @@ buildscript {
                 password(rootProject.hasProperty('repoPass') ? rootProject['repoPass'] : 'cuba123')
             }
         }
+
+        if (System.getenv('HAULMONT_REPOSITORY_URL')) {
+            maven {
+                credentials {
+                    username System.getenv('HAULMONT_REPOSITORY_USER')
+                    password System.getenv('HAULMONT_REPOSITORY_PASSWORD')
+                }
+                url System.getenv('HAULMONT_REPOSITORY_URL')
+            }
+        }
         
     }
     dependencies {
